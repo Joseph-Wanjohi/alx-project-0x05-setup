@@ -1,6 +1,6 @@
 import ImageCard from "@/components/common/ImageCard";
 import { ImageProps } from "@/interfaces";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const Home: React.FC = () => {
   const [prompt, setPrompt] = useState<string>("");
@@ -9,9 +9,23 @@ const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleGenerateImage = async () => {
-    console.log("Generating Images...");
-    console.log(process.env.NEXT_PUBLIC_GPT_API_KEY);
-  }
+    setIsLoading(true);
+    const resp = await fetch("/api/generate-image", {
+      method: "POST",
+      body: JSON.stringify({ prompt }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!resp.ok) {
+      setIsLoading(false);
+      return;
+    }
+    {/* */}
+    const data = await resp.json();
+    setIsLoading(false);
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-black p-4">
